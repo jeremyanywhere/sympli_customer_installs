@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: customer1-ingress
+  namespace: customer1
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - customer1.jeremymeyer.ai
+      secretName: customer1-tls 
+  rules:
+  - host: customer1.jeremymeyer.ai
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service
+            port:
+              number: 80

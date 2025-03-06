@@ -1,0 +1,16 @@
+.DS_Store
+docker_images/fastapi/app/
+docker_images/nginx/webapp/sympli-client-assessment
+docker_images/nginx/tls.crt
+docker_images/nginx/tls.key
+docker_images/nginx/certs/jeremymeyer.ai.crt
+docker_images/nginx/certs/jeremymeyer.ai.key
+docker_images/nginx/webapp/sympli-client-assessment/main-SOBIYF4P.js
+kubernetes_deployments/cert.pem
+kubernetes_deployments/certs/tls.crt
+kubernetes_deployments/certs/tls.key
+docker_images/nginx/webapp/sympli-client-assessment/main-SOBIYF4P.js
+docker_images/fastapi/app/.key
+*.pem
+*.crt
+*.key

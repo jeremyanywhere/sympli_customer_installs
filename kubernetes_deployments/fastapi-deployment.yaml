@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi
+  namespace: customer1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fastapi
+  template:
+    metadata:
+      labels:
+        app: fastapi
+    spec:
+      containers:
+        - name: fastapi
+          image: jeremyanywhere/symp-fastapi:latest
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 8080
+          env:
+          - name: MONGO_URL
+            value: "mongo-service:27017"
+          - name: E_MAIL_COMPLETION_URL
+            value: "http://customer1.jeremymeyer.ai"  
+      imagePullSecrets:
+      - name: my-dockerhub-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service
+  namespace: customer1
+spec:
+  selector:
+    app: fastapi
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+  type: ClusterIP  # Internal service
