@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mongodb
-  namespace: customer1
+  namespace: tafcpa
 spec:
   replicas: 1
   selector:
@@ -16,22 +16,24 @@ spec:
       containers:
         - name: mongodb
           image: jeremyanywhere/symp-mongo:latest
+          command: ["mongod"]
+          args: ["--dbpath", "/data/tafcpa", "--bind_ip", "0.0.0.0"]
+          workingDir: "/data/tafcpa"  # ✅ Sets correct namespace-specific storage path
           imagePullPolicy: Always
           ports:
-          - containerPort: 27017
+            - containerPort: 27017
           volumeMounts:
-          - name: mongo-storage
-            mountPath: /data/db
+            - name: mongo-storage
+              mountPath: /data/tafcpa  # ✅ Namespace-specific mount
       volumes:
-      - name: mongo-storage
-        persistentVolumeClaim:
-          claimName: mongo-pvc
+        - name: mongo-storage
+          persistentVolumeClaim:
+            claimName: mongo-pvc-tafcpa
 ---
-
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: mongo-pv-customer1
+  name: mongo-pv-tafcpa
 spec:
   capacity:
     storage: 5Gi
@@ -40,30 +42,32 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   hostPath:
-    path: "/mnt/data/customer1-mongo" # Path on the host machine
+    path: "/mnt/data/tafcpa-mongo"  # ✅ Ensuring namespace-specific storage directory
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mongo-pvc
-  namespace: customer1
+  name: mongo-pvc-tafcpa
+  namespace: tafcpa
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi
+  volumeName: mongo-pv-tafcpa  # ✅ Explicitly binds to correct PV
+  storageClassName: manual
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: mongo-service
-  namespace: customer1
+  namespace: tafcpa
 spec:
   selector:
     app: mongodb
   ports:
-  - protocol: TCP
-    port: 27017
-    targetPort: 27017
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
   type: ClusterIP  # Internal service

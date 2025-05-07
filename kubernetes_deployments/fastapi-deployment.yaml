@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fastapi
-  namespace: customer1
+  namespace: tafcpa
 spec:
   replicas: 2
   selector:
@@ -21,9 +21,9 @@ spec:
           - containerPort: 8080
           env:
           - name: MONGO_URL
-            value: "mongo-service:27017"
+            value: "mongo-service.tafcpa.svc.cluster.local:27017"
           - name: E_MAIL_COMPLETION_URL
-            value: "http://customer1.jeremymeyer.ai"  
+            value: "https://tafcpa.sympli4.com"
       imagePullSecrets:
       - name: my-dockerhub-secret
 ---
@@ -31,7 +31,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: fastapi-service
-  namespace: customer1
+  namespace: tafcpa
 spec:
   selector:
     app: fastapi

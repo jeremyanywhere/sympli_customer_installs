@@ -1,24 +1,24 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: customer1-ingress
-  namespace: customer1
+  name: tafcpa-ingress
+  namespace: tafcpa
   annotations:
-    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/ingress.class: "traefik"  # ✅ Correct for Traefik in k3s
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik  # ✅ Explicitly tell Kubernetes to use Traefik
   tls:
     - hosts:
-        - customer1.jeremymeyer.ai
-      secretName: customer1-tls 
+        - tafcpa.sympli4.com
+      secretName: sympli4-wildcard-cert # ✅ This must match your TLS secret
   rules:
-  - host: customer1.jeremymeyer.ai
+  - host: tafcpa.sympli4.com
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: nginx-service
+            name: nginx-service-tafcpa
             port:
               number: 80

@@ -1,8 +1,8 @@
-apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx
-  namespace: customer1
+  namespace: tafcpa 
 spec:
   replicas: 1
   selector:
@@ -24,7 +24,7 @@ spec:
         - containerPort: 443  # ✅ Still allows HTTPS
         env:
         - name: FASTAPI_SERVICE_URL
-          value: "fastapi-service.customer1.svc.cluster.local:8080"
+          value: "http://fastapi-service.tafcpa.svc.cluster.local:8080/"
         command: ["/bin/sh", "-c"]
         args:
           - "envsubst '$FASTAPI_SERVICE_URL' < /etc/nginx/conf.d/default.conf > /tmp/default.conf && mv /tmp/default.conf /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
@@ -32,8 +32,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-service-customer1
-  namespace: customer1
+  name: nginx-service-tafcpa
+  namespace: tafcpa
 spec:
   selector:
     app: nginx
@@ -43,3 +43,4 @@ spec:
     port: 80
     targetPort: 80
   type: ClusterIP  # ✅ Correct for Ingress
+  
